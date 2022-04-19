@@ -6,7 +6,7 @@ const c = (el) => document.querySelector(el);
 const cs = (el) => document.querySelectorAll(el);
 
 /*
-?Map() do json externo para manipulação das propriedades, cloneNode() para clonar os modais
+  arquivo de pizzas que simula uma API
 */
 
 pizzaJson.map((item, index) => {
@@ -23,18 +23,14 @@ pizzaJson.map((item, index) => {
   pizzaItem.querySelector(".pizza-item--name").innerHTML = item.name;
   pizzaItem.querySelector(".pizza-item--desc").innerHTML = item.description;
 
-  /*
-  ?Previne o padrão do link para não atualizar a pagina
-  */
-
   pizzaItem.querySelector("a").addEventListener("click", (e) => {
     e.preventDefault();
     let key = e.target.closest(".pizza-item").getAttribute("data-key");
     modalQt = 1;
 
     /*
-    ?Listagem das pizzas
-    */
+  Adiciona a imagem, o titulo, descrição, preço (fixado em 2 decimais após a virgula)
+*/
 
     c(".pizzaBig img").src = pizzaJson[key].img;
     c(".pizzaInfo h1").innerHTML = pizzaJson[key].name;
@@ -43,8 +39,8 @@ pizzaJson.map((item, index) => {
     c(".pizzaInfo--size.selected").classList.remove("selected");
 
     /*
-    ?ForEach para as add as gramas e "Resetar" o btn do tamanho selecionado
-    */
+  Adiciona a class 'Selected' aos tamanhos e preenche o span com os pesos das pizzas
+*/
 
     cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
       if (sizeIndex == 2) {
@@ -57,8 +53,8 @@ pizzaJson.map((item, index) => {
     c(".pizzaInfo--qt").innerHTML = modalQt;
 
     /*
-    ?Faz surgir o modal e cria efeito fade
-    */
+  Faz surgir o modal
+*/
 
     c(".pizzaWindowArea").style.opacity = 0;
     c(".pizzaWindowArea").style.display = "flex";
@@ -71,7 +67,7 @@ pizzaJson.map((item, index) => {
 });
 
 /*
-  ?Eventos do modal
+  Efeitos fade e fechar modal
 */
 
 function closeModal() {
@@ -86,3 +82,26 @@ cs(".pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton").forEach(
     item.addEventListener("click", closeModal);
   }
 );
+
+/*
+  Incremento e decremento dos botões de quantidade de pizza, funcionalidade de deixar ativo botões ativos na escolha de tamanhos
+ */
+
+c(".pizzaInfo--qtmenos").addEventListener("click", () => {
+  if (modalQt > 1) {
+    modalQt--;
+    c(".pizzaInfo--qt").innerHTML = modalQt;
+  }
+});
+
+c(".pizzaInfo--qtmais").addEventListener("click", () => {
+  modalQt++;
+  c(".pizzaInfo--qt").innerHTML = modalQt;
+});
+
+cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
+  size.addEventListener("click", () => {
+    c(".pizzaInfo--size.selected").classList.remove("selected");
+    size.classList.add("selected");
+  });
+});
