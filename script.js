@@ -1,7 +1,9 @@
 /*
   !declaração de variaveis
 */
+let cart = [];
 let modalQt = 1;
+let modalKey = 0;
 const c = (el) => document.querySelector(el);
 const cs = (el) => document.querySelectorAll(el);
 
@@ -27,6 +29,7 @@ pizzaJson.map((item, index) => {
     e.preventDefault();
     let key = e.target.closest(".pizza-item").getAttribute("data-key");
     modalQt = 1;
+    modalKey = key;
 
     /*
   Adiciona a imagem, o titulo, descrição, preço (fixado em 2 decimais após a virgula)
@@ -105,3 +108,44 @@ cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
     size.classList.add("selected");
   });
 });
+
+/*
+  adiciona a funcionalidade do botão "adicionar ao carrinho", verificação para adicionar uma nova quantidade de pizza ao carrinho
+*/
+
+c(".pizzaInfo--addButton").addEventListener("click", () => {
+  let size = parseInt(c(".pizzaInfo--size.selected").getAttribute("data-key"));
+
+  let identifier = pizzaJson[modalKey].id + "@" + size;
+
+  let key = cart.findIndex((item) => item.identifier == identifier);
+
+  if (key > -1) {
+    cart[key].qt += modalQt;
+  } else {
+    cart.push({
+      identifier,
+      id: pizzaJson[modalKey].id,
+      size,
+      qt: modalQt,
+    });
+  }
+  updateCart();
+  closeModal();
+});
+
+/*
+  Carrinho de compras, função de atualizar e abrir o carrinho caso tenha algum conteudo nele e remove quando não tem
+*/
+
+function updateCart() {
+  if (cart.length > 0) {
+    c("aside").classList.add("show");
+    for (let i in cart) {
+      let pizzaItem = pizzaJson.find((item) => item.id == cart[i].id);
+      console.log(pizzaItem);
+    }
+  } else {
+    c("aside").classList.remove("show");
+  }
+}
