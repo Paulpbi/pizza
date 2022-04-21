@@ -8,12 +8,12 @@ const c = (el) => document.querySelector(el);
 const cs = (el) => document.querySelectorAll(el);
 
 /*
-  arquivo de pizzas que simula uma API
+      map no JSON
 */
 
 pizzaJson.map((item, index) => {
+  
   let pizzaItem = c(".models .pizza-item").cloneNode(true);
-
   pizzaItem.setAttribute("data-key", index);
   pizzaItem.querySelector(".pizza-item--img img").src = item.img;
   pizzaItem.querySelector(
@@ -25,14 +25,17 @@ pizzaJson.map((item, index) => {
   pizzaItem.querySelector(".pizza-item--name").innerHTML = item.name;
   pizzaItem.querySelector(".pizza-item--desc").innerHTML = item.description;
 
+
   pizzaItem.querySelector("a").addEventListener("click", (e) => {
     e.preventDefault();
     let key = e.target.closest(".pizza-item").getAttribute("data-key");
     modalQt = 1;
     modalKey = key;
 
-    /*
-  Adiciona a imagem, o titulo, descrição, preço (fixado em 2 decimais após a virgula)
+/*
+      preenche os itens da "API" para a tela como imagem, o titulo, descrição, preço (fixado em 2 decimais após a virgula)
+
+      Adiciona a class 'Selected' aos tamanhos e preenche o span com os pesos das pizzas
 */
 
     c(".pizzaBig img").src = pizzaJson[key].img;
@@ -40,10 +43,6 @@ pizzaJson.map((item, index) => {
     c(".pizzaInfo--desc").innerHTML = pizzaJson[key].description;
     c(".pizzaInfo--actualPrice").innerHTML = pizzaJson[key].price.toFixed(2);
     c(".pizzaInfo--size.selected").classList.remove("selected");
-
-    /*
-  Adiciona a class 'Selected' aos tamanhos e preenche o span com os pesos das pizzas
-*/
 
     cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
       if (sizeIndex == 2) {
@@ -56,7 +55,7 @@ pizzaJson.map((item, index) => {
     c(".pizzaInfo--qt").innerHTML = modalQt;
 
     /*
-  Faz surgir o modal
+  Faz surgir o modal / fechar o modal ao clicar no cancelar
 */
 
     c(".pizzaWindowArea").style.opacity = 0;
@@ -68,10 +67,6 @@ pizzaJson.map((item, index) => {
 
   c(".pizza-area").append(pizzaItem);
 });
-
-/*
-  Efeitos fade e fechar modal
-*/
 
 function closeModal() {
   c(".pizzaWindowArea").style.opacity = 0;
@@ -87,7 +82,7 @@ cs(".pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton").forEach(
 );
 
 /*
-  Incremento e decremento dos botões de quantidade de pizza, funcionalidade de deixar ativo botões ativos na escolha de tamanhos
+  Incremento e decremento dos botões de quantidade de pizza e funcionalidade de deixar ativo botões marcados / ativos no modal
  */
 
 c(".pizzaInfo--qtmenos").addEventListener("click", () => {
@@ -110,7 +105,7 @@ cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
 });
 
 /*
-  adiciona a funcionalidade do botão "adicionar ao carrinho", verificação para adicionar uma nova quantidade de pizza ao carrinho
+  adiciona a funcionalidade do botão "adicionar ao carrinho" do modal
 */
 
 c(".pizzaInfo--addButton").addEventListener("click", () => {
@@ -135,15 +130,40 @@ c(".pizzaInfo--addButton").addEventListener("click", () => {
 });
 
 /*
-  Carrinho de compras, função de atualizar e abrir o carrinho caso tenha algum conteudo nele e remove quando não tem
+  UpdateCard() cuida de todas as ações do carrinho de compras
 */
 
 function updateCart() {
   if (cart.length > 0) {
     c("aside").classList.add("show");
+    c(".cart").innerHTML = "";
+
     for (let i in cart) {
       let pizzaItem = pizzaJson.find((item) => item.id == cart[i].id);
-      console.log(pizzaItem);
+      let cartItem = c(".models .cart--item").cloneNode(true);
+
+      let pizzaSizeName;
+      switch (cart[i].size) {
+        case 0:
+          pizzaSizeName = "P";
+          break;
+
+        case 1:
+          pizzaSizeName = "M";
+          break;
+
+        case 2:
+          pizzaSizeName = "G";
+          break;
+      }
+
+      let pizzaName = `${pizzaItem.name} (${pizzaSizeName})`;
+
+      cartItem.querySelector("img").src = pizzaItem.img;
+      cartItem.querySelector(".cart--item-nome").innerHTML = pizzaName;
+      cartItem.querySelector(".cart--item--qt").innerHTML = cart[i].qt;
+
+      c(".cart").append(cartItem);
     }
   } else {
     c("aside").classList.remove("show");
